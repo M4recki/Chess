@@ -1,12 +1,11 @@
 from pieces import Pawn, Rook, Bishop, Knight, Queen, King
 import pygame as pg
 
+
 class PieceManager:
     def __init__(self, screen):
         self.figures = {}
         self.selected_piece = None
-        self.dot_image = pg.image.load("assets/images/dot.png")
-        self.dot_image = pg.transform.scale(self.dot_image, (75, 75))
         self.highlighted_cells = set()
         self.selected_cells = set()
         self.screen = screen
@@ -31,12 +30,14 @@ class PieceManager:
         if 0 <= y + direction < 8:
             self.highlighted_cells.add((x, y + direction))
 
-        # Move two spaces forward (only on beginning)
-        if (
-            (color == "white" and y == 1) or (color == "black" and y == 6)
-        ) and 0 <= y + 2 * direction < 8:
-            self.highlighted_cells.add((x, y + 2 * direction))
-
+        # Move two spaces forward (first move)
+        if color == "white":
+            if 0 <= y + 2*direction < 8:
+                self.highlighted_cells.add((x, y + 2*direction))
+        elif color == "black":
+            if 0 <= y + 2*direction < 8:
+                self.highlighted_cells.add((x, y + 2*direction))
+   
     def highlight_rook_moves(self, x, y):
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
@@ -101,8 +102,10 @@ class PieceManager:
         pg.draw.rect(self.screen, "#e16954", (x * 75, y * 75, 75, 75))
 
     def draw_dot(self, x, y):
-        self.screen.blit(self.dot_image, (x * 75, y * 75))
-
+        color = (200, 200, 200)
+        radius = 20
+        pg.draw.circle(self.screen, color, (x * 75 + 37, y * 75 + 37), radius)
+    
     def move_piece(self, x, y):
         piece_data = self.figures[self.selected_piece]
         figure = piece_data["piece"]
@@ -114,27 +117,25 @@ class PieceManager:
         self.figures[(x, y)] = {"piece": figure, "position": (x, y)}
         figure.position = (x, y)
 
+        # Clear highlighted cells when moving a piece
         self.highlighted_cells.clear()
         self.selected_piece = None
 
     def handle_click(self, x, y, button):
         if button == 1:  # Left mouse button
-            self.selected_cells.clear()  # Clear every selected cell
+            self.selected_cells.clear()
             
             if (x, y) in self.highlighted_cells:
                 self.move_piece(x, y)
-            else:
+            elif (x, y) in self.figures:
                 piece_key = (x, y)
-                if piece_key in self.figures:
-                    if self.selected_piece == piece_key:
-                        # Double click on the same piece to deselect it
-                        self.highlighted_cells.clear()
-                    else:
-                        self.selected_piece = piece_key
-                        self.highlight_possible_moves()
-                else:
-                    self.selected_piece = None
-                    self.highlighted_cells.clear()
+                if piece_key != self.selected_piece:
+                    self.selected_piece = piece_key
+                    self.highlight_possible_moves()
+            else:
+                self.selected_piece = None
+                self.highlighted_cells.clear()
+
         elif button == 3:  # Right mouse button
             if (x, y) in self.selected_cells:
                 self.selected_cells.remove((x, y))
