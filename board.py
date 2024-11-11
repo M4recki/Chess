@@ -1,6 +1,7 @@
 import pygame as pg
 
 class Board:
+    """_summary_"""    
     def __init__(self):
         self.screen = pg.display.set_mode((600, 600))
         self.clock = pg.time.Clock()
@@ -12,6 +13,7 @@ class Board:
         self.set_icon = pg.display.set_icon(self.icon)
 
     def run(self):
+        """_summary_"""         
         while self.running:
             self.clock.tick(60)
             for event in pg.event.get():

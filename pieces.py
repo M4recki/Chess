@@ -8,10 +8,20 @@ class Figure:
     """
 
     def __init__(self, color):
+        """_summary_
+
+        Args:
+            color (_type_): _description_
+        """        
         self.color = color
         self.image = None
 
     def load_image(self, image_path):
+        """_summary_
+
+        Args:
+            image_path (_type_): _description_
+        """        
         self.image = image.load(image_path)
         self.image = transform.scale(self.image, (75, 75))
 

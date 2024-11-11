@@ -3,11 +3,13 @@ from board import Board
 from piece_manager import PieceManager
 
 class GameLogic:
+    """_summary_"""    
     def __init__(self):
         self.board = Board()
         self.piece_manager = PieceManager(self.board.screen)
 
     def handle_events(self):
+        """_summary_"""        
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.board.running = False
@@ -16,9 +18,11 @@ class GameLogic:
                 self.piece_manager.handle_click(x, y, event.button)
             
     def update_game_state(self):
+        """_summary_"""        
         pass
     
     def draw_everything(self):
+        """_summary_"""        
         self.board.screen.blit(self.board.board_image, (0, 0))
         
         # Draw dots for possible moves
@@ -32,6 +36,7 @@ class GameLogic:
         self.piece_manager.draw_figures()
 
     def run(self):
+        """_summary_"""        
         while self.board.running:
             self.handle_events()
             self.update_game_state()
